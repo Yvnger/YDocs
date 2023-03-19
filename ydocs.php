@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: WooDocs
+ * Plugin Name: YDocs
  * Plugin URI: https://github.com/Yvnger/WooDocs
  * Description: This is a documentation plugin for WooCommerce
  * Version: 1.0
@@ -110,7 +110,7 @@ function print_order()
     $address['postcode'] = $order->get_billing_postcode();
     $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
 
-    $numnum = get_post_meta( $order_id, '_saphali_lite_invoice_no', true );
+    $numnum = get_post_meta($order_id, '_saphali_lite_invoice_no', true);
 
     $margin_top = 8;
     $margin_left = 50;
@@ -143,51 +143,136 @@ function print_order()
     $pdf->SetFont('dejavusans', '', $font_size, '', true, 'UTF-8');
     $pdf->Cell(0, $margin_top, $address['country'], 0, 1);
 
-        // Рисуем разделительную линию
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->SetLineWidth(0.1);
-        $pdf->Line(10, 120, 200, 120);
+    // Рисуем разделительную линию
+    $pdf->SetDrawColor(0, 0, 0);
+    $pdf->SetLineWidth(0.1);
+    // $pdf->Line(10, 120, 200, 120);
 
     // Добавляем информацию о товарах в заказе
-    $pdf->Ln(20);
-    $pdf->Cell(50, 10, 'Product', 0);
-    $pdf->Cell(50, 10, 'Quantity', 0);
-    $pdf->Cell(50, 10, 'Price', 0);
-    $pdf->Cell(0, 10, 'Total', 0, 1);
+    // Получаем все элементы заказа
 
-    foreach ($order->get_items() as $item) {
+    $items = $order->get_items();
+
+    // Определяем столбцы таблицы
+    $header = array('Продукт', 'Артикул', 'Цена', 'Количество', 'Итоговая стоимость');
+
+    // Создаем пустую таблицу с указанными столбцами
+    $data = array();
+    $data[] = $header;
+    
+
+    // Заполняем таблицу данными
+    foreach ($items as $item) {
+        // Получаем информацию о товаре
         $product = $item->get_product();
-        $pdf->Cell(50, 10, $product->get_name(), 0);
-        $pdf->Cell(50, 10, $item->get_quantity(), 0);
-        $pdf->Cell(50, 10, wc_price($product->get_price()), 0);
-        $pdf->Cell(0, 10, wc_price($item->get_total()), 0, 1);
+        // Получаем URL изображения товара
+        $image_url = wp_get_attachment_url($product->get_image_id());
+        // $image = $pdf->Image($image_url, '', '', 50);
+
+        // Получаем значения столбцов
+        $product_name = $product->get_name();
+        $product_sku = $product->get_sku();
+        $product_price = $product->get_price();
+        $quantity = $item->get_quantity();
+        $total = $item->get_total();
+
+        // Форматируем цену и итоговую стоимость в соответствии с настройками магазина
+        // $product_price = wc_price($product_price);
+        // $total = wc_price($total);
+
+        // Создаем новую строку таблицы
+        $row = array();
+        // $row[] = $image;
+        $row[] = $product_name;
+        $row[] = $product_sku;
+        $row[] = $product_price . ' руб.';
+        $row[] = $quantity;
+        $row[] = $total . ' руб.';
+
+        // Добавляем строку в таблицу
+        $data[] = $row;
     }
 
-    // Добавляем информацию о доставке
-    $pdf->Ln(20);
-    $pdf->Cell(0, 10, 'Shipping Information', 0, 1);
-    $pdf->Cell(50, 10, 'Method:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_method(), 0, 1);
-    $pdf->Cell(50, 10, 'Address:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2(), 0, 1);
-    $pdf->Cell(50, 10, 'City:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_city(), 0, 1);
-    $pdf->Cell(50, 10, 'State:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_state(), 0, 1);
-    $pdf->Cell(50, 10, 'Zip Code:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_postcode(), 0, 1);
-    $pdf->Cell(50, 10, 'Country:', 0);
-    $pdf->Cell(0, 10, $order->get_shipping_country(), 0, 1);
+    // Добавляем подытог
+    $data[] = array('', '', '', 'Подытог:', $order->get_subtotal() . ' руб.');
+
+    // Добавляем стоимость доставки, если есть
+    if ($order->get_shipping_total() > 0) {
+        $data[] = array('', '', '', 'Доставка:', $order->get_shipping_total() . ' руб.');
+    }
 
     // Добавляем общую стоимость заказа
-    $pdf->Ln(20);
-    $pdf->Cell(0, 10, 'Order Total', 0, 1);
-    $pdf->Cell(50, 10, 'Subtotal:', 0);
-    $pdf->Cell(0, 10, wc_price($order->get_subtotal()), 0, 1);
-    $pdf->Cell(50, 10, 'Shipping:', 0);
-    $pdf->Cell(0, 10, wc_price($order->get_shipping_total()), 0, 1);
-    $pdf->Cell(50, 10, 'Total:', 0);
-    $pdf->Cell(0, 10, wc_price($order->get_total()), 0, 1);
+    $data[] = array('', '', '', 'Итого:', $order->get_total() . ' руб.');
+
+    // Создаем таблицу
+    $pdf->SetFont('dejavusans', '', 6, '', true, 'UTF-8');
+    $pdf->SetFillColor(245, 245, 245);
+    $pdf->SetDrawColor(255, 255, 255);
+    $pdf->SetTextColor(33, 47, 73);
+    $pdf->SetLineWidth(0.1);
+
+    foreach ($data as $row) {
+        foreach ($row as $column) {
+            $pdf->Cell(35, 7, $column, 1, 0, 'L', 1);
+        }
+        $pdf->Ln();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // // Добавляем информацию о доставке
+    // $pdf->Ln(20);
+    // $pdf->Cell(0, 10, 'Shipping Information', 0, 1);
+    // $pdf->Cell(50, 10, 'Method:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_method(), 0, 1);
+    // $pdf->Cell(50, 10, 'Address:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2(), 0, 1);
+    // $pdf->Cell(50, 10, 'City:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_city(), 0, 1);
+    // $pdf->Cell(50, 10, 'State:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_state(), 0, 1);
+    // $pdf->Cell(50, 10, 'Zip Code:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_postcode(), 0, 1);
+    // $pdf->Cell(50, 10, 'Country:', 0);
+    // $pdf->Cell(0, 10, $order->get_shipping_country(), 0, 1);
+
+    // // Добавляем общую стоимость заказа
+    // $pdf->Ln(20);
+    // $pdf->Cell(0, 10, 'Order Total', 0, 1);
+    // $pdf->Cell(50, 10, 'Subtotal:', 0);
+    // $pdf->Cell(0, 10, wc_price($order->get_subtotal()), 0, 1);
+    // $pdf->Cell(50, 10, 'Shipping:', 0);
+    // $pdf->Cell(0, 10, wc_price($order->get_shipping_total()), 0, 1);
+    // $pdf->Cell(50, 10, 'Total:', 0);
+    // $pdf->Cell(0, 10, wc_price($order->get_total()), 0, 1);
 
     // Выводим документ в браузер или сохраняем его в файл
     $pdf->Output('order_' . $order_id . '.pdf', 'I');
