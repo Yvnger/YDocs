@@ -69,7 +69,6 @@ function print_order()
 
     // Добавляем заголовок
     $pdf->SetFont('dejavusans', '', 10, '', true, 'UTF-8');
-    // $pdf->Write(10, 'Order #' . $order_id, '', 0, 'C');
 
     // Установка отступов от края страницы
     $pdf->SetMargins(10, 10, 10);
@@ -102,51 +101,65 @@ function print_order()
     // Добавляем информацию о заказе
     $pdf->SetFont('dejavusans', '', 10, '', true, 'UTF-8');
 
+    $company = $order->get_billing_company();
+    $payer = $order->get_meta('_payer');
+    $consignee = $order->get_meta('_consignee');
+    $vatin = $order->get_meta('_billing_vatin');
+
     $fullname = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+    $phone = $order->get_billing_phone();
+    $email = $order->get_billing_email();
 
     $address['country'] = $order->get_billing_country();
     $address['state'] = $order->get_billing_state();
     $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
     $address['postcode'] = $order->get_billing_postcode();
     $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+    $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
 
     $numnum = get_post_meta($order_id, '_saphali_lite_invoice_no', true);
 
     $margin_top = 8;
     $margin_left = 50;
     $font_size = 6;
+    $cellHeight = 10;
+
     $pdf->Ln(20);
 
     $pdf->SetFont('dejavusans', 'B', $font_size, '', true, 'UTF-8');
-    $pdf->Cell(0, $margin_top, 'Содержание заказа', 0, 1);
 
-    $pdf->Cell($margin_left, $margin_top, 'ФИО:', 0);
+    $column1 = array("Компания", "Плательщик", "Грузополучатель", "ИНН/КПП плательщика");
+    $column2 = array("ФИО", "Телефон", "Email", "Адрес", "Город");
+    $column3 = array("Номер накладной", "Номер заказа", "Дата заказа", "Метод оплаты");
 
-    $pdf->SetFont('dejavusans', '', $font_size, '', true, 'UTF-8');
-    $pdf->Cell(0, $margin_top, $fullname, 0, 1);
-
+    $pdf->Cell(0, 10, 'Содержание заказа', 0, 1);
     $pdf->SetFont('dejavusans', 'B', $font_size, '', true, 'UTF-8');
-    $pdf->Cell($margin_left, $margin_top, 'Адрес:', 0);
 
-    $pdf->SetFont('dejavusans', '', $font_size, '', true, 'UTF-8');
-    $pdf->Cell(0, $margin_top, $address['street'], 0, 1);
+    // Создаем таблицу с 3 колонками
+    $pdf->setFillColor(255, 255, 255);
+    $pdf->Cell(60, $cellHeight, 'Адрес доставки (Юр. лицо)', 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, 'Адрес доставки (Физ. лицо)', 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, '', 0, 1, 'L', 1);
 
-    $pdf->SetFont('dejavusans', 'B', $font_size, '', true, 'UTF-8');
-    $pdf->Cell($margin_left, $margin_top, 'Город:', 0);
+    // Добавляем данные в таблицу
+    $pdf->SetFont('dejavusans', '', 8);
 
-    $pdf->SetFont('dejavusans', '', $font_size, '', true, 'UTF-8');
-    $pdf->Cell(0, $margin_top, $address['city'], 0, 1);
+    $pdf->MultiCell(60, $cellHeight, 'Компания: ' . $company, 0, 'L', false, 0);
+    $pdf->Cell(60, $cellHeight, 'ФИО: ' . $fullname, 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, '№ накладной: ', 0, 1, 'L', 1);
+    $pdf->MultiCell(60, $cellHeight, 'Плательщик: ' . $payer, 0, 'L', false, 0);
+    $pdf->Cell(60, $cellHeight, 'Телефон: ' . $phone, 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, '№ заказа: ' . $order->get_id(), 0, 1, 'L', 1);
+    $pdf->MultiCell(60, $cellHeight, 'Грузополучатель: ' . $consignee, 0, 'L', false, 0);
+    $pdf->Cell(60, $cellHeight, 'E-mail: ' . $email, 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, 'Дата заказа: ' . $order->get_date_created()->format('d.m.Y, H:i'), 0, 1, 'L', 1);
+    $pdf->Cell(60, $cellHeight, 'ИНН/КПП: ' . $vatin, 0, 0, 'L', 1);
+    $pdf->Cell(60, $cellHeight, 'Страна: ' . $address['country'], 0, 0, 'L', 1);
+    $pdf->MultiCell(60, $cellHeight, 'Метод оплаты: ' . $order->get_payment_method_title(), 0, 'L');
+    $pdf->Cell(60, $cellHeight, '', 0, 0, 'L', 1);
+    $pdf->MultiCell(60, $cellHeight, 'Адрес: ' . $address['display'], 0, 0);
 
-    $pdf->SetFont('dejavusans', 'B', $font_size, '', true, 'UTF-8');
-    $pdf->Cell($margin_left, $margin_top, 'Страна:', 0);
-
-    $pdf->SetFont('dejavusans', '', $font_size, '', true, 'UTF-8');
-    $pdf->Cell(0, $margin_top, $address['country'], 0, 1);
-
-    // Рисуем разделительную линию
-    $pdf->SetDrawColor(0, 0, 0);
-    $pdf->SetLineWidth(0.1);
-    // $pdf->Line(10, 120, 200, 120);
+    $pdf->Ln(10);
 
     // Добавляем информацию о товарах в заказе
     // Получаем все элементы заказа
@@ -159,7 +172,7 @@ function print_order()
     // Создаем пустую таблицу с указанными столбцами
     $data = array();
     $data[] = $header;
-    
+
 
     // Заполняем таблицу данными
     foreach ($items as $item) {
