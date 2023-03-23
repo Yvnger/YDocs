@@ -33,16 +33,63 @@ function add_custom_order_column_content($column)
     if ('docs' === $column) {
         $order_id = $post->ID;
         $order = wc_get_order($order_id);
-        echo '<a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_order&order_id=' . $order_id), 'print_order_' . $order_id) . '" target="_blank">' . __('Распечатать заказ', 'woodocs') . '</a>';
+        echo '<a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_order&order_id=' . $order_id), 'print_order_' . $order_id) . '" target="_blank">' . __('Распечатать заказ', 'ydocs') . '</a>';
     }
 }
 
-// Подключаем библиотеку TCPDF
-require_once(plugin_dir_path(__FILE__) . 'tcpdf/tcpdf.php');
-
-// Обработчик Ajax запроса для генерации документа
+// Обработчик Ajax запроса для печати заказа
 add_action('wp_ajax_print_order', 'print_order');
 add_action('wp_ajax_nopriv_print_order', 'print_order');
+
+function ydocs_box()
+{
+    add_meta_box(
+        'ydocs-box',
+        'Документы',
+        'ydocs_box_content',
+        'shop_order',
+        'side',
+        'default'
+    );
+}
+
+function ydocs_box_content()
+{
+    $order_id = get_the_ID();
+
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_invoice&order_id=' . $order_id), 'print_invoice_' . $order_id) . '" target="_blank">Счет-фактура</a></p>';
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_bill&order_id=' . $order_id), 'print_bill_' . $order_id) . '" target="_blank">Счет</a></p>';
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_contract&order_id=' . $order_id), 'print_contract_' . $order_id) . '" target="_blank">Договор</a></p>';
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_waybill&order_id=' . $order_id), 'print_waybill_' . $order_id) . '" target="_blank">Накладная</a></p>';
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_transport_waybill&order_id=' . $order_id), 'print_transport_waybill_' . $order_id) . '" target="_blank">Транспортная накладная</a></p>';
+    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_order&order_id=' . $order_id), 'print_order_' . $order_id) . '" target="_blank">Заказ</a></p>';
+}
+
+add_action('add_meta_boxes_shop_order', 'ydocs_box');
+
+// Обработчик Ajax запроса для печати счёта-фактуры
+add_action('wp_ajax_print_invoice', 'print_invoice');
+add_action('wp_ajax_nopriv_print_invoice', 'print_invoice');
+
+// Обработчик Ajax запроса для печати счёта
+add_action('wp_ajax_print_bill', 'print_bill');
+add_action('wp_ajax_nopriv_print_bill', 'print_bill');
+
+// Обработчик Ajax запроса для печати договора
+add_action('wp_ajax_print_contract', 'print_contract');
+add_action('wp_ajax_nopriv_print_contract', 'print_contract');
+
+// Обработчик Ajax запроса для печати накладной
+add_action('wp_ajax_print_waybill', 'print_waybill');
+add_action('wp_ajax_nopriv_print_waybill', 'print_waybill');
+
+// Обработчик Ajax запроса для печати транспортной накладной
+add_action('wp_ajax_print_transport_waybill', 'print_transport_waybill');
+add_action('wp_ajax_nopriv_print_transport_waybill', 'print_transport_waybill');
+
+
+// Подключаем библиотеку TCPDF
+require_once(plugin_dir_path(__FILE__) . 'tcpdf/tcpdf.php');
 
 function print_order()
 {
@@ -53,7 +100,7 @@ function print_order()
     $order_id = intval($_REQUEST['order_id']);
     $order = wc_get_order($order_id);
     if (!$order) {
-        wp_die(__('Invalid order ID', 'woodocs'));
+        wp_die(__('Invalid order ID', 'ydocs'));
     }
 
     // Создаем экземпляр класса TCPDF
@@ -231,63 +278,96 @@ function print_order()
         $pdf->Ln();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // // Добавляем информацию о доставке
-    // $pdf->Ln(20);
-    // $pdf->Cell(0, 10, 'Shipping Information', 0, 1);
-    // $pdf->Cell(50, 10, 'Method:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_method(), 0, 1);
-    // $pdf->Cell(50, 10, 'Address:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2(), 0, 1);
-    // $pdf->Cell(50, 10, 'City:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_city(), 0, 1);
-    // $pdf->Cell(50, 10, 'State:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_state(), 0, 1);
-    // $pdf->Cell(50, 10, 'Zip Code:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_postcode(), 0, 1);
-    // $pdf->Cell(50, 10, 'Country:', 0);
-    // $pdf->Cell(0, 10, $order->get_shipping_country(), 0, 1);
-
-    // // Добавляем общую стоимость заказа
-    // $pdf->Ln(20);
-    // $pdf->Cell(0, 10, 'Order Total', 0, 1);
-    // $pdf->Cell(50, 10, 'Subtotal:', 0);
-    // $pdf->Cell(0, 10, wc_price($order->get_subtotal()), 0, 1);
-    // $pdf->Cell(50, 10, 'Shipping:', 0);
-    // $pdf->Cell(0, 10, wc_price($order->get_shipping_total()), 0, 1);
-    // $pdf->Cell(50, 10, 'Total:', 0);
-    // $pdf->Cell(0, 10, wc_price($order->get_total()), 0, 1);
-
-    // Выводим документ в браузер или сохраняем его в файл
     $pdf->Output('order_' . $order_id . '.pdf', 'I');
     exit;
+}
+
+/**
+ * Печать счёта-фактуры
+ */
+function print_invoice()
+{
+    // Проверяем, что пользователь имеет права на выполнение этой операции
+    check_ajax_referer('print_invoice_' . $_REQUEST['order_id'], 'security');
+
+    // Получаем данные о заказе
+    $order_id = intval($_REQUEST['order_id']);
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        wp_die(__('Invalid order ID', 'ydocs'));
+    }
+
+    echo 'Счёт-фактура';
+}
+
+/**
+ * Печать счёта
+ */
+function print_bill()
+{
+    // Проверяем, что пользователь имеет права на выполнение этой операции
+    check_ajax_referer('print_bill_' . $_REQUEST['order_id'], 'security');
+
+    // Получаем данные о заказе
+    $order_id = intval($_REQUEST['order_id']);
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        wp_die(__('Invalid order ID', 'ydocs'));
+    }
+
+    echo 'Счёт';
+}
+
+/**
+ * Печать договора
+ */
+function print_contract()
+{
+    // Проверяем, что пользователь имеет права на выполнение этой операции
+    check_ajax_referer('print_contract_' . $_REQUEST['order_id'], 'security');
+
+    // Получаем данные о заказе
+    $order_id = intval($_REQUEST['order_id']);
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        wp_die(__('Invalid order ID', 'ydocs'));
+    }
+
+    echo 'Договор';
+}
+
+/**
+ * Печать накладной
+ */
+function print_waybill()
+{
+    // Проверяем, что пользователь имеет права на выполнение этой операции
+    check_ajax_referer('print_waybill_' . $_REQUEST['order_id'], 'security');
+
+    // Получаем данные о заказе
+    $order_id = intval($_REQUEST['order_id']);
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        wp_die(__('Invalid order ID', 'ydocs'));
+    }
+
+    echo 'Накладная';
+}
+
+/**
+ * Печать транспортной накладной
+ */
+function print_transport_waybill()
+{
+    // Проверяем, что пользователь имеет права на выполнение этой операции
+    check_ajax_referer('print_transport_waybill_' . $_REQUEST['order_id'], 'security');
+
+    // Получаем данные о заказе
+    $order_id = intval($_REQUEST['order_id']);
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        wp_die(__('Invalid order ID', 'ydocs'));
+    }
+
+    echo 'Транспортная накладная';
 }
