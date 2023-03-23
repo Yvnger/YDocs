@@ -297,7 +297,14 @@ function print_invoice()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    echo 'Счёт-фактура';
+    // Отправляем заголовки для указания типа контента
+    header('Content-Type: text/html; charset=utf-8');
+
+    // Выводим сгенерированную страницу
+    include_once('templates/print_invoice.php');
+
+    // Останавливаем выполнение скрипта, чтобы не выводить другой контент
+    exit;
 }
 
 /**
