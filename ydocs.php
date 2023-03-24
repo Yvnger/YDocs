@@ -10,7 +10,6 @@
  * License: GPL2
  */
 
-
 // Проверяем, что WooCommerce активирован
 if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     return;
@@ -90,6 +89,8 @@ add_action('wp_ajax_nopriv_print_transport_waybill', 'print_transport_waybill');
 
 // Подключаем библиотеку TCPDF
 require_once(plugin_dir_path(__FILE__) . 'tcpdf/tcpdf.php');
+
+// Путь к файлу стилей
 
 function print_order()
 {
@@ -296,6 +297,15 @@ function print_invoice()
     if (!$order) {
         wp_die(__('Invalid order ID', 'ydocs'));
     }
+
+    $address['country'] = $order->get_billing_country();
+    $address['state'] = $order->get_billing_state();
+    $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
+    $address['postcode'] = $order->get_billing_postcode();
+    $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+    $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
+
+    $items = $order->get_items();
 
     // Отправляем заголовки для указания типа контента
     header('Content-Type: text/html; charset=utf-8');
