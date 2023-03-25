@@ -90,8 +90,6 @@ add_action('wp_ajax_nopriv_print_transport_waybill', 'print_transport_waybill');
 // Подключаем библиотеку TCPDF
 require_once(plugin_dir_path(__FILE__) . 'tcpdf/tcpdf.php');
 
-// Путь к файлу стилей
-
 function print_order()
 {
     // Проверяем, что пользователь имеет права на выполнение этой операции
@@ -325,6 +323,7 @@ function print_bill()
     // Проверяем, что пользователь имеет права на выполнение этой операции
     check_ajax_referer('print_bill_' . $_REQUEST['order_id'], 'security');
 
+
     // Получаем данные о заказе
     $order_id = intval($_REQUEST['order_id']);
     $order = wc_get_order($order_id);
@@ -332,7 +331,23 @@ function print_bill()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    echo 'Счёт';
+    $address['country'] = $order->get_billing_country();
+    $address['state'] = $order->get_billing_state();
+    $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
+    $address['postcode'] = $order->get_billing_postcode();
+    $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+    $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
+
+    $items = $order->get_items();
+
+    // Отправляем заголовки для указания типа контента
+    header('Content-Type: text/html; charset=utf-8');
+
+    // Выводим сгенерированную страницу
+    include_once('templates/print_bill.php');
+
+    // Останавливаем выполнение скрипта, чтобы не выводить другой контент
+    exit;
 }
 
 /**

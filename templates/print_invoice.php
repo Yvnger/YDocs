@@ -710,6 +710,7 @@
 </head>
 
 <body>
+
     <div class="document">
         <table class="first" width="100%" cellspacing="0" cellpadding="0">
             <tbody>
@@ -777,7 +778,7 @@
                                         <td>
                                             <div class="editable" id="gruzopol"><?= $order->get_meta('_consignee') ?> </div> <span class="number_documet_line"></span>
                                         </td>
-                                    </tr>
+                                    </tr> 
                                     <tr>
                                         <td class="editable first">К платежно-расчетному документу №</td>
                                         <td>
@@ -787,7 +788,7 @@
                                     <tr>
                                         <td class="editable first"><strong>Покупатель:</strong> </td>
                                         <td>
-                                            <div class="editable" id="pokupatel"><?= $order->get_meta('_payer') ?></div> <span class="number_documet_line"></span>
+                                            <div class="editable" id="pokupatel"><?= $order->get_meta('_billing_company') ?></div> <span class="number_documet_line"></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -950,7 +951,7 @@
                                         X
                                     </td>
                                     <td class="item two">0,00</td>
-                                    <td id="invoice_total_summ"><?= wc_price($order->get_subtotal()) ?></td>
+                                    <td id="invoice_total_summ"><?= wc_price($order->get_total()) ?></td>
                                     <td colspan="3" class="last">&nbsp;</td>
                                 </tr>
                             </tbody>
