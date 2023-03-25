@@ -365,7 +365,38 @@ function print_contract()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    echo 'Договор';
+    setlocale(LC_TIME, 'ru_RU.utf8'); // Устанавливаем локаль для русского языка
+    $date = $order->get_date_created()->format('Y-m-d'); // Исходная дата в формате Y-m-d
+    // Преобразуем дату в нужный формат
+    $date_formatted = strftime('«%e» %B %Y г.', strtotime($date));
+
+    // Приводим месяц к родительному падежу
+    $months = [
+        'января', 'февраля', 'марта', 'апреля',
+        'мая', 'июня', 'июля', 'августа',
+        'сентября', 'октября', 'ноября', 'декабря'
+    ];
+    $date_formatted = str_replace($months, array_map(function ($month) {
+        return $month;
+    }, $months), $date_formatted);
+
+    $address['country'] = $order->get_billing_country();
+    $address['state'] = $order->get_billing_state();
+    $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
+    $address['postcode'] = $order->get_billing_postcode();
+    $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+    $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
+
+    $items = $order->get_items();
+
+    // Отправляем заголовки для указания типа контента
+    header('Content-Type: text/html; charset=utf-8');
+
+    // Выводим сгенерированную страницу
+    include_once('templates/print_contract.php');
+
+    // Останавливаем выполнение скрипта, чтобы не выводить другой контент
+    exit;
 }
 
 /**
