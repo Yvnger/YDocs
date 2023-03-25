@@ -323,7 +323,6 @@ function print_bill()
     // Проверяем, что пользователь имеет права на выполнение этой операции
     check_ajax_referer('print_bill_' . $_REQUEST['order_id'], 'security');
 
-
     // Получаем данные о заказе
     $order_id = intval($_REQUEST['order_id']);
     $order = wc_get_order($order_id);
@@ -414,7 +413,17 @@ function print_waybill()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    echo 'Накладная';
+    // Отправляем заголовки для указания типа контента
+    header('Content-Type: text/html; charset=utf-8');
+
+    $items = $order->get_items();
+
+
+    // Выводим сгенерированную страницу
+    include_once('templates/print_waybill.php');
+
+    // Останавливаем выполнение скрипта, чтобы не выводить другой контент
+    exit;
 }
 
 /**
