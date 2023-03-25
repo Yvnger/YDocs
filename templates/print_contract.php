@@ -3,7 +3,7 @@
 
 <head profile="//dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <title>Договор № MIR-CH-12418</title>
+    <title>Договор № <?= $order_id ?></title>
     <style type="text/css">
         body {
             font-size: 13px;
