@@ -3,7 +3,7 @@
 
 <head profile="//dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <title>Договор № <?= $order_id ?></title>
+    <title>Договор № <?= $data['order_id'] ?></title>
     <style type="text/css">
         body {
             font-size: 13px;
@@ -133,11 +133,11 @@
 <body>
 
     <div style="width: 191mm; margin-left: 5mm;">
-        <p class="head"><strong>Договор №<?= $order_id ?><br />
+        <p class="head"><strong>Договор № <?= $data['order_id'] ?><br />
             </strong></p>
         <p>&nbsp;</p>
         <p class="left_f">г. Москва</p>
-        <p class="right">от <?= $date_formatted ?></p>
+        <p class="right">от «<?= $data['date']['day'] ?>» <?= $data['date']['month_name'] . ' ' . $data['date']['year'] ?></p>
         <div class="clear"></div>
         <p>&nbsp;</p>
         <p>ИП Телятников Ю.М., именуемый в дальнейшем "Поставщик", в лице руководителя Телятникова Юрия Михайловича, действующего на основании Свидетельства, с одной стороны, и ИП Семенова А.О. в лице руководителя Семеновой Алеси Олеговны, действующего на основании Свидетельства, именуемое далее "Покупатель", заключили настоящий Договор.</p>
@@ -155,23 +155,16 @@
                 <td style="width: 37mm;">Сумма без НДС, &nbsp;руб.</td>
             </tr>
 
-            <?php foreach ($items as $item) :
-                $product = $item->get_product();
-                $i = 1;
-            ?>
-
+            <?php foreach ($data['items'] as $item) : ?>
                 <tr style="border-color: black;">
-                    <td><?= $i ?></td>
-                    <td><?= $product->get_name() ?></td>
+                    <td><?= $item['count_num'] ?></td>
+                    <td><?= $item['name'] ?></td>
                     <td>шт</td>
-                    <td style="text-align: right;"><?= $item->get_quantity() ?></td>
-                    <td style="text-align: right;"><?= $product->get_price() ?></td>
-                    <td style="text-align: right;"><?= $item->get_total() ?></td>
+                    <td style="text-align: right;"><?= $item['quantity'] ?></td>
+                    <td style="text-align: right;"><?= $item['price']['int'] ?></td>
+                    <td style="text-align: right;"><?= $item['total']['int'] ?></td>
                 </tr>
-            <?php
-                $i++;
-            endforeach;
-            ?>
+            <?php endforeach; ?>
         </table>
         <p>&nbsp;</p>
         <p><strong>2. Цена товара</strong></p>

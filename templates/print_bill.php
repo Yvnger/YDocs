@@ -3,7 +3,7 @@
 
 <head profile="//dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <title>СЧЕТ № <?= $order_id ?></title>
+    <title>СЧЕТ № <?= $data['order_id'] ?></title>
     <style type="text/css">
         @page {}
 
@@ -1076,7 +1076,7 @@
         <tr class="ro2">
             <td style="text-align:left;width:0.0709in; " class="ce1"> </td>
             <td colspan="37" rowspan="2" style="text-align:left;width:0.2118in; " class="ce9">
-                <p>Счет на оплату № <?= $order_id ?> от <?= $order->get_date_created()->format('d.m.Y') ?> г.</p>
+                <p>Счет на оплату № <?= $data['order_id'] ?> от <?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?> г.</p>
             </td>
             <td style="text-align:left;width:0.6362in; " class="Default"> </td>
         </tr>
@@ -1216,39 +1216,33 @@
             <td style="text-align:left;width:0.6362in; " class="Default"> </td>
         </tr>
 
-        <?php foreach ($items as $item) :
-            $product = $item->get_product();
-            $i = 1;
-        ?>
+        <?php foreach ($data['items'] as $item) : ?>
             <tr class="ro5">
                 <td style="text-align:left;width:0.0709in; " class="Default"> </td>
                 <td colspan="2" style="text-align:right; width:0.2118in; " class="ce14">
-                    <p><?= $i ?></p>
+                    <p><?= $item['count_num'] ?></p>
                 </td>
-                <td style="text-align:left;width:0.0965in; " colspan="18" class="ce23"> <?= $product->get_name() ?>, <?= $product->get_sku() ?> </td>
+                <td style="text-align:left;width:0.0965in; " colspan="18" class="ce23"> <?= $item['name'] ?>, <?= $item['sku'] ?> </td>
                 <td style="text-align:left;width:0.1937in; " class="ce30"> </td>
-                <td style="text-align:left;width:0.2118in; " class="ce31"><?= $item->get_quantity() ?></td>
+                <td style="text-align:left;width:0.2118in; " class="ce31"><?= $item['quantity'] ?></td>
                 <td style="text-align:left;width:0.1409in; " class="ce31"> </td>
                 <td style="text-align:left;width:0.0709in; " class="ce32"> </td>
                 <td style="text-align:left;width:0.2118in; " class="ce35">шт </td>
                 <td style="text-align:left;width:0.1409in; " class="ce35"> </td>
                 <td style="text-align:left;width:0.0709in; " class="ce30"> </td>
                 <td style="text-align:left;width:0.2118in; " class="ce31"></td>
-                <td style="text-align:center;width:0.2118in; " class="ce31"><?= wc_price($product->get_price()) ?></td>
+                <td style="text-align:center;width:0.2118in; " class="ce31"><?= $item['price']['float'] ?></td>
                 <td style="text-align:left;width:0.2118in; " class="ce31"> </td>
                 <td style="text-align:left;width:0.1673in; " class="ce31"> </td>
                 <td style="text-align:left;width:0.0437in; " class="ce30"> </td>
                 <td style="text-align:left;width:0.2118in; " class="ce31"></td>
-                <td style="text-align:center;width:0.2118in; " class="ce31"><?= wc_price($item->get_total()) ?></td>
+                <td style="text-align:center;width:0.2118in; " class="ce31"><?= $item['total']['float'] ?></td>
                 <td style="text-align:left;width:0.2118in; " class="ce31"> </td>
                 <td style="text-align:left;width:0.2118in; " class="ce31"> </td>
                 <td style="text-align:left;width:0.1146in; " class="ce38"> </td>
                 <td style="text-align:left;width:0.6362in; " class="Default"> </td>
             </tr>
-        <?php
-            $i++;
-        endforeach;
-        ?>
+        <?php endforeach; ?>
 
         <tr class="ro3">
             <td style="text-align:left;width:0.0709in; " class="ce1"> </td>
@@ -1327,7 +1321,7 @@
                 <p>Итого:</p>
             </td>
             <td style="width: 1.0055in; text-align: center ;" colspan="6">
-                <p><?= wc_price($order->get_subtotal()) ?></p>
+                <p><?= $data['total']['float'] ?></p>
                 <p>
                 </p>
             </td>
@@ -1402,20 +1396,20 @@
             <td style="text-align:right;width:0.5909in; " class="ce36" colspan="3">
                 <p>Всего к оплате:</p>
             </td>
-            <td style="text-align: center" colspan="6" class=""><?= wc_price($order->get_total()) ?></td>
+            <td style="text-align: center" colspan="6" class=""><?= $data['total']['float'] ?></td>
             <td style="text-align:left;width:0.6362in; " class="Default"> </td>
         </tr>
         <tr class="ro2">
             <td style="text-align:left;width:0.0709in; " class="ce1"> </td>
             <td colspan="37" style="text-align:left;width:0.2118in; " class="ce16">
-                <p>Всего наименований <?= count($items) ?>, на сумму <?= wc_price($order->get_total()) ?> </p>
+                <p>Всего наименований <?= $data['quantity']['int'] ?>, на сумму <?= $data['total']['withCurrency'] ?></p>
             </td>
             <td style="text-align:left;width:0.6362in; " class="Default"> </td>
         </tr>
         <tr class="ro6">
             <td style="text-align:left;width:0.0709in; " class="Default"> </td>
             <td colspan="36" style="text-align:left;width:0.2118in; " class="ce17">
-                <p>Пять тысяч триста десять рублей 00 копеек</p>
+                <p><?= $data['total']['string'] ?> 00 копеек</p>
             </td>
             <td style="text-align:left;width:0.1146in; " class="Default"> </td>
             <td style="text-align:left;width:0.6362in; " class="Default"> </td>

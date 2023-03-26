@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head profile="http://dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <title xml:lang="ru-RU">ТОВАРНАЯ НАКЛАДНАЯ № <?= $order_id ?></title>
-    <meta name="DCTERMS.title" content="ТОВАРНАЯ НАКЛАДНАЯ № <?= $order_id ?>" xml:lang="ru-RU" />
+    <title xml:lang="ru-RU">ТОВАРНАЯ НАКЛАДНАЯ № <?= $data['order_id'] ?></title>
+    <meta name="DCTERMS.title" content="ТОВАРНАЯ НАКЛАДНАЯ № <?= $data['order_id'] ?>" xml:lang="ru-RU" />
     <meta name="DCTERMS.language" content="en-US" scheme="DCTERMS.RFC4646" />
     <meta name="DCTERMS.source" content="http://xml.openoffice.org/odf2xhtml" />
     <meta name="DCTERMS.creator" content="user" />
@@ -499,9 +499,7 @@
             <p class="P16">(организация, адрес, телефон, факс, банковские реквизиты)</p>
             
                 <p class="P3" style="text-align:left">
-                  <span id="platelshik">ИП Рукомасова</span>
-                    
-                 
+                  <span id="platelshik"><?= $order->get_billing_company() ?></span>
                 </p>
 
           </td>
@@ -537,7 +535,7 @@
             <p class="P16">(организация, адрес, телефон, факс, банковские реквизиты)</p>
             
                 <p class="P3">
-                  <span id="a__"> Счет № <?= $order_id ?> от <?= $order->get_date_created()->format('d.m.Y') ?></span>
+                  <span id="a__"> Счет № <?= $data['order_id'] ?> от <?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?></span>
                 </p>
 
           </td>
@@ -554,7 +552,7 @@
             
                 <p class="P4">
                   <span>&nbsp;</span>
-                  <span id="sxhet"><?= $order_id ?>                    </span>
+                  <span id="sxhet"><?= $data['order_id'] ?>                    </span>
                   
                 </p>
 
@@ -587,7 +585,7 @@
             
                 <p class="P4">
                   <span>&nbsp;</span>
-                  <span id="data_scheta"><?= $order->get_date_created()->format('d.m.Y') ?></span>
+                  <span id="data_scheta"><?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?></span>
                     
                 </p>
 
@@ -640,7 +638,7 @@
             
                 <p class="P4">
                   <span>&nbsp;</span>
-                  <span id="a__"><?= $order_id ?></span>
+                  <span id="a__"><?= $data['order_id'] ?></span>
                     
                 </p>
 
@@ -651,10 +649,10 @@
             <p class="P11">ТОВАРНАЯ НАКЛАДНАЯ</p>
           </td>
           <td colspan="3" class="Table5_E15" style="text-align:center">
-            <p class="Title"><?= $order_id ?></p>
+            <p class="Title"><?= $data['order_id'] ?></p>
           </td>
           <td colspan="5" class="Table5_J15" style="text-align:center">
-            <p class="Title"><?= $order->get_date_created()->format('d.m.Y') ?></p>
+            <p class="Title"><?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?></p>
           </td>
           <td colspan="5" class="Table5_A1">
             
@@ -679,7 +677,7 @@
             
                 <p class="P4">
                   <span>&nbsp;</span>
-                  <span id="a__"><?= $order->get_date_created()->format('d.m.Y') ?></span>
+                  <span id="a__"><?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?></span>
                     
                   
                 </p>
@@ -1004,16 +1002,15 @@
           </td>
         </tr>
        
-        <?php foreach ($items as $item) :
-            $product = $item->get_product();
-            $i = 1;
+        <?php
+        foreach ($data['items'] as $item) :
         ?>
             <tr class="Table519">
             <td class="Table5_B17">
-                <p class="P12"><?= $i ?></p>
+                <p class="P12"><?= $item['count_num'] ?></p>
             </td>
             <td colspan="4" class="Table5_B19">
-                <p class="Содержимое_20_таблицы"> <?= $product->get_name() ?>, <?= $product->get_sku() ?></p>
+                <p class="Содержимое_20_таблицы"> <?= $item['name'] ?>, <?= $item['sku'] ?></p>
             </td>
             <td class="Table5_B17">
                 <p class="P14"> </p>
@@ -1037,13 +1034,13 @@
                 <p class="P14"> </p>
             </td>
             <td class="Table5_B17">
-                <p class="P14"> <?= $item->get_quantity() ?> </p>
+                <p class="P14"> <?= $item['quantity'] ?> </p>
             </td>
             <td colspan="2" class="Table5_B17">
-                <p class="P15" style="text-align: center!important"><?= wc_price($product->get_price()) ?></p>
+                <p class="P15" style="text-align: center!important"><?= $item['price']['float'] ?></p>
             </td>
             <td class="Table5_B17">
-                <p class="P15"><?= wc_price($product->get_price()) ?></p>
+                <p class="P15"><?= $item['price']['float'] ?></p>
             </td>
             <td colspan="2" class="Table5_B17">
                 <p class="P14">Без НДС</p>
@@ -1052,302 +1049,13 @@
                 <p class="P13"> --</p>
             </td>
             <td class="Table5_W18">
-                <p class="P15"><?= wc_price($item->get_total()) ?></p>
+                <p class="P15"><?= $item['total']['float'] ?></p>
             </td>
             </tr>
         <?php
-            $i++;
         endforeach;
         ?>
-        
-	<tr class="Table519">
-		  <td class="Table5_B17">
-			<p class="P12">1</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак "Suissewin", ACW-1416M-01</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">730,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">730,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">730,00</p>
-		  </td>
-	</tr>
-        
-	<tr class="Table519">
-		  <td class="Table5_B17">
-			<p class="P12">2</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак " Suissewin", ACW-8810M-03</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">730,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">730,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">730,00</p>
-		  </td>
-	</tr>
-        
-	<tr class="Table519">
-		  <td class="Table5_B17">
-			<p class="P12">3</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак "Suissewin", ACW-8810M-04</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">730,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">730,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">730,00</p>
-		  </td>
-	</tr>
-        
-	<tr class="Table519">
-		  <td class="Table5_B17">
-			<p class="P12">4</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак "Suissewin", CW-1876/56-01</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">1040,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">1040,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">1040,00</p>
-		  </td>
-	</tr>
-        
-	<tr class="Table519">
-		  <td class="Table5_B17">
-			<p class="P12">5</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак "Suissewin", CW-1876/56-05</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">1040,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">1040,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">1040,00</p>
-		  </td>
-	</tr>
-        
-	<tr class="Table519 last">
-		  <td class="Table5_B17">
-			<p class="P12">6</p>
-		  </td>
-		  <td colspan="4" class="Table5_B19">
-			<p class="Содержимое_20_таблицы"> Рюкзак "Suissewin", CW-6927/56-01</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> шт </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14">796</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> </p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P14"> 1 </p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P15" style="text-align: center!important">1040,00</p>
-		  </td>
-		  <td class="Table5_B17">
-			<p class="P15">1040,00</p>
-		  </td>
-		  <td colspan="2" class="Table5_B17">
-			<p class="P14">Без НДС</p>
-		  </td>
-		  <td colspan="3" class="Table5_B17">
-			<p class="P13"> --</p>
-		  </td>
-		  <td class="Table5_W18">
-			<p class="P15">1040,00</p>
-		  </td>
-	</tr>
-      
+		      
 		<tr class="Table524">
           <td colspan="11" class="Table5_B17_edit" style="text-align:right">
             <p class="P15">Итого</p>
@@ -1359,13 +1067,13 @@
             <p class="P14">&nbsp;</p>
           </td>
           <td class="Table5_B17"  style="text-align:center">
-            <p class="P14">6</p>
+            <p class="P14"><?= $data['quantity']['int'] ?></p>
           </td>
           <td colspan="2" class="Table5_B17" style="text-align:center">
             <p class="P14">Х</p>
           </td>
           <td class="Table5_B17">
-            <p class="P15">5310,00</p>
+            <p class="P15"><?= $data['total']['float'] ?></p>
           </td>
           <td colspan="2" class="Table5_B17" style="text-align:center">
             <p class="P14">Х</p>
@@ -1374,7 +1082,7 @@
             <p class="P15">0,00</p>
           </td>
           <td class="Table5_W18">
-            <p class="P15">5310,00</p>
+            <p class="P15"><?= $data['total']['float'] ?></p>
           </td>
         </tr>
 			<tr class="Table524">
@@ -1388,13 +1096,13 @@
             <p class="P14">&nbsp;</p>
           </td>
           <td class="Table5_B17">
-            <p class="P14">6</p>
+            <p class="P14"><?= $data['quantity']['int'] ?></p>
           </td>
           <td colspan="2" class="Table5_B17">
             <p class="P14">Х</p>
           </td>
           <td class="Table5_B17">
-            <p class="P15">5310,00</p>
+            <p class="P15"><?= $data['total']['float'] ?></p>
           </td>
           <td colspan="2" class="Table5_B17">
             <p class="P14">Х</p>
@@ -1403,7 +1111,7 @@
             <p class="P15">0,00</p>
           </td>
           <td class="Table5_W18">
-            <p class="P15">5310,00</p>
+            <p class="P15"><?= $data['total']['float'] ?></p>
           </td>
         </tr>
 
@@ -1487,7 +1195,8 @@
 
                                 <p class="P3">
                                   <span>&nbsp;</span>
-                                  <span id="count_item">шесть порядковых номеров записей</span>
+                                  <!-- <span id="count_item">шесть порядковых номеров записей</span> -->
+                                  <span id="count_item"><?= $data['quantity']['waybill'] ?></span>
                                 </p>
 
                           </td>
@@ -1737,7 +1446,7 @@
                                 <p class="P3_edit">
                                   <span>&nbsp;</span>
                                   <span id="summ_word">
-                                    <span class="T3">Пять тысяч триста десять рублей 00 копеек</span>
+                                    <span class="T3"><?= $data['total']['string'] ?> 00 копеек</span>
                                   </span>
                                   
                                 </p>
@@ -2307,8 +2016,9 @@
 
                                         <p class="P4">
                                           <span>&nbsp;</span>
-                                          <span id="a__n_data">24</span>
-                                          
+                                          <span id="a__n_data">
+                                            <?= $data['date']['day'] ?>
+                                        </span>
                                         </p>
 
                                   </td>
@@ -2321,7 +2031,8 @@
                                     <h1 class="P5">
                                       <span id="a__февраля">
                                         <span></span>
-                                        марта                                      </span>
+                                        <?= $data['date']['month_name'] ?>                                      
+                                    </span>
                                     </h1>
                                   </td>
                                   <td class="Table1_A1"></td>
@@ -2329,7 +2040,8 @@
                                     <h1 class="P5">
                                       <span id="a__2015">
                                         <span></span>
-                                        2023                                      </span>
+                                        <?= $data['date']['year'] ?>
+                                      </span>
                                     </h1>
                                   </td>
                                   <td class="Table1_A1">

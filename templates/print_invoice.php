@@ -2,7 +2,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>СЧЕТ-ФАКТУРА № <?= $order_id ?></title>
+    <title>СЧЕТ-ФАКТУРА № <?= $data['order_id'] ?></title>
     <style type="text/css">
         @page {
             margin-top: 0.5cm;
@@ -726,9 +726,10 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>Счет-фактура № </td>
-                                                            <td class="underline"><span>&nbsp;&nbsp;&nbsp;&nbsp;#<?= $order_id ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+                                                            <td class="underline"><span>&nbsp;&nbsp;&nbsp;&nbsp;<?= $data['order_id'] ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
                                                             <td>&nbsp;от&nbsp;</td>
-                                                            <td class="underline"><span>&nbsp;<?= $order->get_date_created()->format('d.m.Y') ?> г.&nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
+                                                            <td class="underline"><span>&nbsp;
+                                                                <?= $data['date']['day'] . '.' . $data['date']['month_num'] . '.' . $data['date']['year'] ?> г.&nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
                                                             <td><span class="number_documet_line">&nbsp;</span> </td>
                                                         </tr>
                                                     </tbody>
@@ -778,7 +779,7 @@
                                         <td>
                                             <div class="editable" id="gruzopol"><?= $order->get_meta('_consignee') ?> </div> <span class="number_documet_line"></span>
                                         </td>
-                                    </tr> 
+                                    </tr>
                                     <tr>
                                         <td class="editable first">К платежно-расчетному документу №</td>
                                         <td>
@@ -910,30 +911,28 @@
                             </thead>
                             <tbody>
 
-                                <?php foreach ($items as $item) :
-                                    $product = $item->get_product();
-                                ?>
+                                <?php foreach ($data['items'] as $item) : ?>
 
                                     <tr id="item">
                                         <td class="item normal left">
-                                            <?= $product->get_name() ?>
+                                            <?= $item['name'] ?>
                                         </td>
                                         <td class="item center">796</td>
                                         <td class="item center">шт</td>
                                         <td class="item normal">
-                                            <?= $item->get_quantity() ?>
+                                            <?= $item['quantity'] ?>
                                         </td>
                                         <td class="item normal">
-                                            <?= wc_price($product->get_price()) ?>
+                                            <?= $item['price']['float'] ?>
                                         </td>
                                         <td class="item_summ_wo_nds">
-                                            <?= wc_price($product->get_price()) ?>
+                                            <?= $item['total']['float'] ?>
                                         </td>
                                         <td class="item normal center">--</td>
                                         <td class="item center">Без НДС</td>
                                         <td class="item right">--</td>
                                         <td class="invoice_com_item_summ">
-                                            <?= wc_price($item->get_total()) ?>
+                                            <?= $item['total']['float'] ?>
                                         </td>
                                         <td class="item two">&nbsp;</td>
                                         <td class="item two">&nbsp;</td>
@@ -946,12 +945,12 @@
                                     <td colspan="5" class="summ" valign="center">
                                         <div class="editable_sys" id="items_summ_txt">Всего к оплате:</div>
                                     </td>
-                                    <td class="item two"><?= wc_price($order->get_subtotal()) ?></td>
+                                    <td class="item two"><?= $data['subtotal']['float'] ?></td>
                                     <td colspan="2" class="x">
                                         X
                                     </td>
                                     <td class="item two">0,00</td>
-                                    <td id="invoice_total_summ"><?= wc_price($order->get_total()) ?></td>
+                                    <td id="invoice_total_summ"><?= $data['total']['float'] ?></td>
                                     <td colspan="3" class="last">&nbsp;</td>
                                 </tr>
                             </tbody>

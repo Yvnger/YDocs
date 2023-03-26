@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: YDocs
- * Plugin URI: https://github.com/Yvnger/WooDocs
+ * Plugin URI: https://github.com/Yvnger/YDocs
  * Description: This is a documentation plugin for WooCommerce
  * Version: 1.0
  * Author: YVNGER DEV
@@ -56,12 +56,7 @@ function ydocs_box_content()
 {
     $order_id = get_the_ID();
 
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_invoice&order_id=' . $order_id), 'print_invoice_' . $order_id) . '" target="_blank">Счет-фактура</a></p>';
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_bill&order_id=' . $order_id), 'print_bill_' . $order_id) . '" target="_blank">Счет</a></p>';
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_contract&order_id=' . $order_id), 'print_contract_' . $order_id) . '" target="_blank">Договор</a></p>';
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_waybill&order_id=' . $order_id), 'print_waybill_' . $order_id) . '" target="_blank">Накладная</a></p>';
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_transport_waybill&order_id=' . $order_id), 'print_transport_waybill_' . $order_id) . '" target="_blank">Транспортная накладная</a></p>';
-    echo '<p><a class="button" href="' . wp_nonce_url(admin_url('admin-ajax.php?action=print_order&order_id=' . $order_id), 'print_order_' . $order_id) . '" target="_blank">Заказ</a></p>';
+    include_once('templates/metabox-template.php');
 }
 
 add_action('add_meta_boxes_shop_order', 'ydocs_box');
@@ -86,6 +81,7 @@ add_action('wp_ajax_nopriv_print_waybill', 'print_waybill');
 add_action('wp_ajax_print_transport_waybill', 'print_transport_waybill');
 add_action('wp_ajax_nopriv_print_transport_waybill', 'print_transport_waybill');
 
+require_once('functions.php');
 
 // Подключаем библиотеку TCPDF
 require_once(plugin_dir_path(__FILE__) . 'tcpdf/tcpdf.php');
@@ -303,10 +299,10 @@ function print_invoice()
     $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
     $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
 
-    $items = $order->get_items();
-
     // Отправляем заголовки для указания типа контента
     header('Content-Type: text/html; charset=utf-8');
+
+    $data = get_data();
 
     // Выводим сгенерированную страницу
     include_once('templates/print_invoice.php');
@@ -337,10 +333,10 @@ function print_bill()
     $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
     $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
 
-    $items = $order->get_items();
-
     // Отправляем заголовки для указания типа контента
     header('Content-Type: text/html; charset=utf-8');
+
+    $data = get_data();
 
     // Выводим сгенерированную страницу
     include_once('templates/print_bill.php');
@@ -364,21 +360,6 @@ function print_contract()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    setlocale(LC_TIME, 'ru_RU.utf8'); // Устанавливаем локаль для русского языка
-    $date = $order->get_date_created()->format('Y-m-d'); // Исходная дата в формате Y-m-d
-    // Преобразуем дату в нужный формат
-    $date_formatted = strftime('«%e» %B %Y г.', strtotime($date));
-
-    // Приводим месяц к родительному падежу
-    $months = [
-        'января', 'февраля', 'марта', 'апреля',
-        'мая', 'июня', 'июля', 'августа',
-        'сентября', 'октября', 'ноября', 'декабря'
-    ];
-    $date_formatted = str_replace($months, array_map(function ($month) {
-        return $month;
-    }, $months), $date_formatted);
-
     $address['country'] = $order->get_billing_country();
     $address['state'] = $order->get_billing_state();
     $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
@@ -386,10 +367,10 @@ function print_contract()
     $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
     $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
 
-    $items = $order->get_items();
-
     // Отправляем заголовки для указания типа контента
     header('Content-Type: text/html; charset=utf-8');
+
+    $data = get_data();
 
     // Выводим сгенерированную страницу
     include_once('templates/print_contract.php');
@@ -413,11 +394,13 @@ function print_waybill()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
+
     // Отправляем заголовки для указания типа контента
     header('Content-Type: text/html; charset=utf-8');
 
-    $items = $order->get_items();
+    $data = get_data();
 
+    $items = $order->get_items();
 
     // Выводим сгенерированную страницу
     include_once('templates/print_waybill.php');
@@ -441,5 +424,24 @@ function print_transport_waybill()
         wp_die(__('Invalid order ID', 'ydocs'));
     }
 
-    echo 'Транспортная накладная';
+    // Отправляем заголовки для указания типа контента
+    header('Content-Type: text/html; charset=utf-8');
+
+    $address['country'] = $order->get_billing_country();
+    $address['state'] = $order->get_billing_state();
+    $address['city'] = $address['state'] . ', ' . $order->get_billing_city();
+    $address['postcode'] = $order->get_billing_postcode();
+    $address['street'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+    $address['display'] = $address['postcode'] . ', ' . $address['state'] . ', ' . $address['city'] . ', ' . $address['street'];
+
+    $data = get_data();
+
+    $items = $order->get_items();
+
+    // Выводим сгенерированную страницу
+    include_once('templates/print_transport_waybill.php');
+
+    // Останавливаем выполнение скрипта, чтобы не выводить другой контент
+    exit;
 }
+
