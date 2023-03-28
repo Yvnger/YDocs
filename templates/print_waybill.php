@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<xml version="1.0" encoding="UTF-8">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head profile="http://dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />

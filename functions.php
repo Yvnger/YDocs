@@ -18,6 +18,7 @@ function getNoun($number, $one, $two, $five) {
     }
 }
 
+
 function numberToWord($num)
 {
     $arr_1 = array('', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять');
