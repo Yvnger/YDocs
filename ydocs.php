@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Plugin Name: YDocs
+ * Plugin Name: YDocs - генерация документов для заказов WooCommerce
  * Plugin URI: https://github.com/Yvnger/YDocs
- * Description: This is a documentation plugin for WooCommerce
+ * Description: Плагин для магазина mir-chemodanov.ru, формирует и печатает документы для заказов. Генерирует счета, накладные и другие документы.
  * Version: 1.0
- * Author: YVNGER DEV
- * Author URI: https://example.com/
+ * Author: YVNGER
+ * Author URI: https://github.com/Yvnger
  * License: GPL2
  */
 
