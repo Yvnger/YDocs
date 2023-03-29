@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Plugin Name: YDocs
  * Plugin URI: https://github.com/Yvnger/YDocs
  * Description: This is a documentation plugin for WooCommerce
  * Version: 1.0
  * Author: YVNGER DEV
- * Author URI: https://github.com/Yvnger/
+ * Author URI: https://example.com/
  * License: GPL2
  */
 
