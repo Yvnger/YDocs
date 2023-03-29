@@ -3,131 +3,8 @@
 
 <head profile="//dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <link rel="stylesheet" href="<?= plugins_url( 'contract.style.css', __FILE__ ); ?>">
     <title>Договор № <?= $data['order_id'] ?></title>
-    <style type="text/css">
-        body {
-            font-size: 13px;
-            font-family: Calibri;
-        }
-
-        p.head {
-            text-align: center;
-            font-size: 15px;
-        }
-
-        .products td {
-            border-color: black;
-        }
-
-        p.abz {
-            padding: 0;
-            margin: 0;
-        }
-
-        .abz_mp {
-            text-align: center;
-            padding: 0;
-            margin: 0px 0 -3px 0;
-        }
-
-        .span_podp {
-            text-align: center;
-            display: inline-block;
-        }
-
-        p.pechatka {
-            text-align: center;
-            clear: both;
-            padding: 0;
-            margin: 0;
-        }
-
-        p.center {
-            text-align: center;
-        }
-
-        .right {
-            float: right;
-            text-align: right;
-            padding: 0;
-            margin: 0;
-        }
-
-        .left_f {
-            text-align: left;
-            padding: 0;
-            margin: 0 0 -16px 0;
-        }
-
-        .clear {
-            clear: both;
-        }
-
-        p {
-            margin: 0;
-            padding: 0;
-        }
-
-        dl.variation {
-            display: inline;
-            font-size: 12px;
-            font-style: italic;
-            padding: 0;
-        }
-
-        dl.variation dt,
-        dl.variation dd {
-            display: inline;
-        }
-
-        dl.variation dd {
-            margin-left: 7px;
-            padding-left: 0;
-        }
-
-        dl.variation dd:last-child:after {
-            content: "";
-        }
-
-        dl.variation dd:after {
-            content: ", ";
-        }
-
-        dl.variation dt {
-            padding: 0 0 0 10px;
-        }
-
-        p#printPreview {
-            padding: 18px;
-            text-align: center;
-        }
-
-        #printPreview a {
-            color: #106E99;
-            text-decoration: none;
-        }
-
-        table p {
-            margin: 0;
-            padding: 0 0 5px;
-        }
-
-        div table td {
-            border-style: solid;
-            border-width: 1px 1px 0 0;
-            padding: 0 5px 0;
-            text-align: center;
-        }
-
-        div table {
-            border-style: solid;
-            border-width: 0 0 1px 1px;
-        }
-
-        table td {
-            max-width: 191mm;
-        }
-    </style>
 </head>
 
 <body>
@@ -293,6 +170,12 @@
                 };
             }
         })();
+
+        // Wait for the new page to load
+        window.addEventListener('load', function() {
+            // Print the page
+            window.print();
+        }, false);
     </script>
 </body>
 

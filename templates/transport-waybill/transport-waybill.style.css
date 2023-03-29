@@ -1,0 +1,85 @@
+@page {
+    size: portrait;
+}
+
+table {
+    width: 100%;
+    border: 0;
+    border-spacing: 0 0;
+    margin-bottom: 30px;
+}
+
+table td {
+    position: relative;
+    padding: 5px 0;
+}
+
+table td.border {
+    border-bottom: 2px solid #000;
+    width: 50%;
+}
+
+td > table {
+    margin-bottom: 0
+}
+
+h3 {
+    margin: 0 0 20px 0
+}
+
+.text-center {
+    text-align: center
+}
+
+.text-right {
+    text-align: right
+}
+
+.text-small {
+    font-size: 80%
+}
+
+.hor-separ {
+    width: 30px
+}
+
+.vertical-separ {
+    width: 40px
+}
+
+.vertical-separ:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin: 0 0 0 -1px;
+    height: 100%;
+    width: 2px;
+    background: #000;
+}
+
+table.table-border {
+    border: 2px solid #000;
+    border-collapse: collapse;
+}
+
+table.table-border td {
+    border: 2px solid #000;
+}
+
+#printBtn {
+    width: 300px;
+    margin: 10px auto;
+    text-align: center;
+    color: white;
+    background: blue;
+    padding: 10px;
+    display: block;
+    cursor: pointer;
+}
+
+@media print {
+    #printBtn {
+        display: none;
+    }
+}

@@ -142,7 +142,7 @@ function print_invoice()
     $data = get_data();
 
     // Выводим сгенерированную страницу
-    include_once('templates/print_invoice.php');
+    include_once('templates/invoice/invoice.php');
 
     // Останавливаем выполнение скрипта, чтобы не выводить другой контент
     exit;
@@ -176,7 +176,7 @@ function print_bill()
     $data = get_data();
 
     // Выводим сгенерированную страницу
-    include_once('templates/print_bill.php');
+    include_once('templates/bill/bill.php');
 
     // Останавливаем выполнение скрипта, чтобы не выводить другой контент
     exit;
@@ -210,7 +210,7 @@ function print_contract()
     $data = get_data();
 
     // Выводим сгенерированную страницу
-    include_once('templates/print_contract.php');
+    include_once('templates/contract/contract.php');
 
     // Останавливаем выполнение скрипта, чтобы не выводить другой контент
     exit;
@@ -240,7 +240,7 @@ function print_waybill()
     $items = $order->get_items();
 
     // Выводим сгенерированную страницу
-    include_once('templates/print_waybill.php');
+    include_once('templates/waybill/waybill.php');
 
     // Останавливаем выполнение скрипта, чтобы не выводить другой контент
     exit;
@@ -276,7 +276,7 @@ function print_transport_waybill()
     $items = $order->get_items();
 
     // Выводим сгенерированную страницу
-    include_once('templates/print_transport_waybill.php');
+    include_once('templates/transport-waybill/transport-waybill.php');
 
     // Останавливаем выполнение скрипта, чтобы не выводить другой контент
     exit;

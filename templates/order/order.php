@@ -186,5 +186,12 @@
 
 </div><!-- .order-items -->
 
+<script>
+    // Wait for the new page to load
+    window.addEventListener('load', function() {
+        // Print the page
+        window.print();
+    }, false);
+</script>
 </body>
 </html>

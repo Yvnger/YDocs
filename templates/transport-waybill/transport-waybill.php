@@ -3,90 +3,8 @@
 
 <head profile="//dublincore.org/documents/dcmi-terms/">
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <link rel="stylesheet" href="<?= plugins_url( 'transport-waybill.style.css', __FILE__ ); ?>">
     <title>Транспортная накладная № <?= $data['order_id'] ?></title>
-    <style type="text/css">
-        table {
-            width: 100%;
-            border: 0;
-            border-spacing: 0 0;
-            margin-bottom: 30px;
-        }
-
-        table td {
-            position: relative;
-            padding: 5px 0;
-        }
-
-        table td.border {
-            border-bottom: 2px solid #000;
-            width: 50%;
-        }
-
-        td>table {
-            margin-bottom: 0
-        }
-
-        h3 {
-            margin: 0 0 20px 0
-        }
-
-        .text-center {
-            text-align: center
-        }
-
-        .text-right {
-            text-align: right
-        }
-
-        .text-small {
-            font-size: 80%
-        }
-
-        .hor-separ {
-            width: 30px
-        }
-
-        .vertical-separ {
-            width: 40px
-        }
-
-        .vertical-separ:after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 50%;
-            margin: 0 0 0 -1px;
-            height: 100%;
-            width: 2px;
-            background: #000;
-        }
-
-        table.table-border {
-            border: 2px solid #000;
-            border-collapse: collapse;
-        }
-
-        table.table-border td {
-            border: 2px solid #000;
-        }
-
-        #printBtn {
-            width: 300px;
-            margin: 10px auto;
-            text-align: center;
-            color: white;
-            background: blue;
-            padding: 10px;
-            display: block;
-            cursor: pointer;
-        }
-
-        @media print {
-            #printBtn {
-                display: none;
-            }
-        }
-    </style>
 </head>
 
 <body style="    max-width: 1000px; margin: 0 auto;">
@@ -754,6 +672,14 @@ print();">Распечатать накладную</button>
             <td> </td>
         </tr>
     </table>
+
+    <script>
+        // Wait for the new page to load
+        window.addEventListener('load', function() {
+            // Print the page
+            window.print();
+        }, false);
+    </script>
 </body>
 
 </html>
